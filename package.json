@@ -1,7 +1,7 @@
 {
   "name": "@netatwork/spy",
   "version": "0.0.1-0",
-  "description": "Proxy-based spy implementation",
+  "description": "Mock the dependencies in unit tests with this proxy-based spy implementation",
   "main": "dist/index.js",
   "typings": "dist/types/index",
   "scripts": {

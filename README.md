@@ -4,8 +4,9 @@
 [![npm download](https://img.shields.io/npm/dt/@netatwork/spy?label=npm%20download)](https://www.npmjs.com/package/@netatwork/spy)
 ![build status](https://github.com/Netatwork-de/spy/workflows/build/badge.svg)
 
-This is a simple proxy-based spy implementation with straight forward API.
-Provides great IntelliSense (also for the object being spied) when used with TypeScript.
+Mock the dependencies in unit tests with this proxy-based spy implementation.
+This is easy to use because of the straight forward and simple API.
+Additionally it provides better development experience with great IntelliSense, also for the object being spied, when used with TypeScript.
 
 ```typescript
 import { Spy, AssertionFactory } from '@netatwork/spy';
