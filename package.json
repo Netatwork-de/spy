@@ -1,6 +1,6 @@
 {
   "name": "@netatwork/spy",
-  "version": "0.0.0",
+  "version": "0.0.1-0",
   "description": "Proxy-based spy implementation",
   "main": "dist/index.js",
   "typings": "dist/types/index",
