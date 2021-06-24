@@ -96,7 +96,7 @@ export class Spy<TObject extends object> {
 	public callThrough<TMethod extends MethodNames<TObject>>(
 		propertyKey: TMethod,
 		...args: MethodParameters<TObject, TMethod>
-	): TObject[TMethod] {
+	): ReturnType<TObject[TMethod]> {
 		const original = this.originalObject;
 		return (original[propertyKey] as Function).apply(original, args);
 	}
