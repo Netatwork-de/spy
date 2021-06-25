@@ -1,0 +1,7 @@
+.github
+.editorconfig
+tests
+.eslintcache
+.eslintignore
+.eslintrc.js
+Development.md
