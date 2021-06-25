@@ -125,7 +125,14 @@ export class Spy<TObject extends object> {
     this.callRecords.set(methodName, record);
   }
 
-  public clearCallRecords(): void { this.callRecords.clear(); }
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  public clearCallRecords<TMethod extends MethodNames<TObject>>(method: TMethod = null!): void {
+    if (method !== null) {
+      this.callRecords.delete(method);
+      return;
+    }
+    this.callRecords.clear();
+  }
 
   public getCallCount(methodName: MethodNames<TObject>): number {
     const calls = this.callRecords.get(methodName);

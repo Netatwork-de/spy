@@ -239,10 +239,15 @@ describe('spy', function () {
       const sut = new Sut(spy.proxy);
       assert.strictEqual(sut.add(1, 2), 3);
       assert.strictEqual(sut.add(new NumWrapper(1), new NumWrapper(2)), 3);
-      assertCallRecords(spy, { add: [2, [[1, 2], [new NumWrapper(1), new NumWrapper(2)]]] });
+      sut.doSomething();
+
+      assertCallRecords(spy, { add: [2, [[1, 2], [new NumWrapper(1), new NumWrapper(2)]]], foo: [1, [[]]], bar: [1, [[]]] });
+
+      spy.clearCallRecords('foo');
+      assertCallRecords(spy, { add: [2, [[1, 2], [new NumWrapper(1), new NumWrapper(2)]]], foo: [0, []], bar: [1, [[]]] });
 
       spy.clearCallRecords();
-      assertCallRecords(spy, { add: [0, []] });
+      assertCallRecords(spy, { add: [0, []], foo: [0, []], bar: [0, []] });
 
       const forty = new NumWrapper(40);
       const two = new NumWrapper(2);

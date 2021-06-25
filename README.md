@@ -208,10 +208,20 @@ const spy = Spy.create(new Dependency(), true);
 const sut = new Sut(spy.proxy);
 sut.add(1, 2);
 sut.add(2, 3);
+sut.doSomething();
 spy.getCallCount('add') === 2 // true
+spy.getCallCount('foo') === 1 // true
+spy.getCallCount('bar') === 1 // true
+
+spy.clearCallRecords('foo');
+spy.getCallCount('add') === 2 // true
+spy.getCallCount('foo') === 0 // true
+spy.getCallCount('bar') === 1 // true
 
 spy.clearCallRecords();
 spy.getCallCount('add') === 0 // true
+spy.getCallCount('foo') === 0 // true
+spy.getCallCount('bar') === 0 // true
 
 sut.add(40, 2);
 spy.getCallCount('add') === 1 // true
