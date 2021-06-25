@@ -10,7 +10,7 @@ export class AssertionFactory {
     return this._assert = assert;
   }
   public static async configureDefault(): Promise<Assert> {
-    return this.configure((await import('chai')).assert)
+    return this.configure((await import('chai')).assert);
   }
   public static get assert(): Assert {
     const assert = this._assert;

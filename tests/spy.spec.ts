@@ -46,7 +46,7 @@ describe('spy', function () {
         throw new AssertionError({ message, actual, expected });
       }
     }
-  }
+  };
 
   async function arrange(defaultAssert: boolean) {
     if (defaultAssert) {
@@ -61,7 +61,7 @@ describe('spy', function () {
       await arrange(defaultAssert);
       await testFunction();
     });
-  }
+  };
 
   function assertCallRecords(spy: Spy<Dependency>, expected: Partial<Record<MethodNames<Dependency>, [times: number, argsList: any[][]]>>) {
     for (const [m, [times, argsList]] of Object.entries(expected)) {
@@ -91,45 +91,45 @@ describe('spy', function () {
     }
   }
 
-  for (const defaultAssert of [true, false]) {
-    $it(`without mock implementation - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
+  for (const useDefaultAssert of [true, false]) {
+    $it(`without mock implementation - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
       const spy = Spy.create(new Dependency(), false);
       const sut = new Sut(spy.proxy);
       assert.strictEqual(sut.doSomething(), 'undefined - undefined');
       assertCallRecords(spy, { foo: [1, [[]]], bar: [1, [[]]] });
-    }, defaultAssert);
+    }, useDefaultAssert);
 
-    $it(`with mock implementation - #1 - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
-      const spy = Spy.create(new Dependency(), false, { foo() { return 'fake foo'; }, bar() { return 'fake bar' } });
+    $it(`with mock implementation - #1 - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
+      const spy = Spy.create(new Dependency(), false, { foo() { return 'fake foo'; }, bar() { return 'fake bar'; } });
       const sut = new Sut(spy.proxy);
       assert.strictEqual(sut.doSomething(), 'fake foo - fake bar');
       assertCallRecords(spy, { foo: [1, [[]]], bar: [1, [[]]] });
-    }, defaultAssert);
+    }, useDefaultAssert);
 
-    $it(`with mock implementation - #2 - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
+    $it(`with mock implementation - #2 - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
       let counter = 1;
-      const spy = Spy.create(new Dependency(), false, { foo() { return `fake foo#${counter++}`; }, bar() { return 'fake bar' } });
+      const spy = Spy.create(new Dependency(), false, { foo() { return `fake foo#${counter++}`; }, bar() { return 'fake bar'; } });
       const sut = new Sut(spy.proxy);
       assert.strictEqual(sut.doSomething(), 'fake foo#1 - fake bar');
       assert.strictEqual(sut.doSomething(), 'fake foo#2 - fake bar');
       assertCallRecords(spy, { foo: [2, [[], []]], bar: [2, [[], []]] });
-    }, defaultAssert);
+    }, useDefaultAssert);
 
-    $it(`with call-through - all - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
+    $it(`with call-through - all - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
       const spy = Spy.create(new Dependency(), true);
       const sut = new Sut(spy.proxy);
       assert.strictEqual(sut.doSomething(), 'real foo - real bar');
       assertCallRecords(spy, { foo: [1, [[]]], bar: [1, [[]]] });
-    }, defaultAssert);
+    }, useDefaultAssert);
 
-    $it(`with call-through - partial - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
+    $it(`with call-through - partial - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
       const spy = Spy.create(new Dependency(), true, { foo() { return 'fake foo'; } });
       const sut = new Sut(spy.proxy);
       assert.strictEqual(sut.doSomething(), 'fake foo - real bar');
       assertCallRecords(spy, { foo: [1, [[]]], bar: [1, [[]]] });
-    }, defaultAssert);
+    }, useDefaultAssert);
 
-    $it(`call-through from mock implementation - with call-through - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
+    $it(`call-through from mock implementation - with call-through - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
       let fooCounter = 0, addCounter = 0;
       const spy: Spy<Dependency> = Spy.create(new Dependency(), true, {
         foo() {
@@ -148,9 +148,9 @@ describe('spy', function () {
       assert.strictEqual(sut.add(2, 40), 80);
       assert.strictEqual(sut.add(40, 2), 42);
       assertCallRecords(spy, { foo: [3, [[], [], []]], bar: [3, [[], [], []]], add: [2, [[2, 40], [40, 2]]] });
-    }, defaultAssert);
+    }, useDefaultAssert);
 
-    $it(`call-through from mock implementation - without call-through - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
+    $it(`call-through from mock implementation - without call-through - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
       let fooCounter = 0, addCounter = 0;
       const spy: Spy<Dependency> = Spy.create(new Dependency(), false, {
         foo() {
@@ -169,9 +169,9 @@ describe('spy', function () {
       assert.strictEqual(sut.add(2, 40), 80);
       assert.strictEqual(sut.add(40, 2), 42);
       assertCallRecords(spy, { foo: [3, [[], [], []]], bar: [3, [[], [], []]], add: [2, [[2, 40], [40, 2]]] });
-    }, defaultAssert);
+    }, useDefaultAssert);
 
-    $it(`call-through another method from mock implementation - with call-through - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
+    $it(`call-through another method from mock implementation - with call-through - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
       let counter = 0;
       const spy: Spy<Dependency> = Spy.create(new Dependency(), true, {
         foo() {
@@ -184,9 +184,9 @@ describe('spy', function () {
       assert.strictEqual(sut.doSomething(), 'real bar - real bar');
       assert.strictEqual(sut.doSomething(), 'fake foo#3 - real bar');
       assertCallRecords(spy, { foo: [3, [[], [], []]], bar: [3, [[], [], []]] });
-    }, defaultAssert);
+    }, useDefaultAssert);
 
-    $it(`call-through another method from mock implementation - without through - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
+    $it(`call-through another method from mock implementation - without through - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
       let counter = 0;
       const spy: Spy<Dependency> = Spy.create(new Dependency(), false, {
         foo() {
@@ -199,31 +199,31 @@ describe('spy', function () {
       assert.strictEqual(sut.doSomething(), 'real bar - undefined');
       assert.strictEqual(sut.doSomething(), 'fake foo#3 - undefined');
       assertCallRecords(spy, { foo: [3, [[], [], []]], bar: [3, [[], [], []]] });
-    }, defaultAssert);
+    }, useDefaultAssert);
 
     for (const callThrough of [true, false]) {
-      $it(`mocking single method - ${!callThrough ? 'without' : 'with'} call-through - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
+      $it(`mocking single method - ${!callThrough ? 'without' : 'with'} call-through - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
         const spy = Spy.create(new Dependency(), 'foo', callThrough, () => 'fake foo');
         const sut = new Sut(spy.proxy);
         assert.strictEqual(sut.doSomething(), callThrough ? 'fake foo - real bar' : 'fake foo - undefined');
         assert.strictEqual(sut.doSomething(), callThrough ? 'fake foo - real bar' : 'fake foo - undefined');
         assertCallRecords(spy, { foo: [2, [[], []]], bar: [2, [[], []]] });
-      }, defaultAssert);
+      }, useDefaultAssert);
 
-      $it(`mock member with a constant value - ${!callThrough ? 'without' : 'with'} call-through - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
+      $it(`mock member with a constant value - ${!callThrough ? 'without' : 'with'} call-through - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
         const spy = Spy.create(new Dependency(), callThrough, { member: 43 });
         assert.strictEqual(spy.proxy.member, 43);
         assert.strictEqual(spy.proxy.prop, callThrough ? 42 : undefined);
-      }, defaultAssert);
+      }, useDefaultAssert);
 
-      $it(`mock property with a constant value - ${!callThrough ? 'without' : 'with'} call-through - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
+      $it(`mock property with a constant value - ${!callThrough ? 'without' : 'with'} call-through - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
         const spy = Spy.create(new Dependency(), callThrough, { prop: 43 });
         assert.strictEqual(spy.proxy.member, callThrough ? 42 : undefined);
         assert.strictEqual(spy.proxy.prop, 43);
-      }, defaultAssert);
+      }, useDefaultAssert);
     }
 
-    $it(`captures methods arguments correctly - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
+    $it(`captures methods arguments correctly - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
       const spy = Spy.create(new Dependency(), true);
       const sut = new Sut(spy.proxy);
       assert.strictEqual(sut.add(1, 2), 3);
@@ -232,9 +232,9 @@ describe('spy', function () {
       const two = new NumWrapper(2);
       assert.strictEqual(sut.add(forty, two), 42);
       assertCallRecords(spy, { add: [3, [[1, 2], [new NumWrapper(1), new NumWrapper(2)], [forty, two]]] });
-    }, defaultAssert);
+    }, useDefaultAssert);
 
-    $it(`captured calls can be cleared - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
+    $it(`captured calls can be cleared - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
       const spy = Spy.create(new Dependency(), true);
       const sut = new Sut(spy.proxy);
       assert.strictEqual(sut.add(1, 2), 3);
@@ -248,9 +248,9 @@ describe('spy', function () {
       const two = new NumWrapper(2);
       assert.strictEqual(sut.add(forty, two), 42);
       assertCallRecords(spy, { add: [1, [[forty, two]]] });
-    }, defaultAssert);
+    }, useDefaultAssert);
 
-    $it(`argument transformer can be used - ${defaultAssert ? 'default' : 'custom'} assertion`, function () {
+    $it(`argument transformer can be used - ${useDefaultAssert ? 'default' : 'custom'} assertion`, function () {
       const spy = Spy.create(new Dependency(), true);
 
       spy.proxy.fizz(42, new NumWrapper(42), 'forty two');
@@ -260,7 +260,7 @@ describe('spy', function () {
         0,
         (args) => {
           const [arg0, arg1, arg2] = args as [number, NumWrapper, string];
-          return `${arg0} - NW ${arg1.num} - ${arg2}`
+          return `${arg0} - NW ${arg1.num} - ${arg2}`;
         });
 
       spy.proxy.fizz(43, new NumWrapper(43), 'forty three');
@@ -270,7 +270,7 @@ describe('spy', function () {
         1,
         (args) => {
           const [arg0, arg1, arg2] = args as [number, NumWrapper, string];
-          return `${arg0} | NW ${arg1.num} | ${arg2}`
+          return `${arg0} | NW ${arg1.num} | ${arg2}`;
         });
 
       spy.isCalledWith(
@@ -280,6 +280,6 @@ describe('spy', function () {
         (args) => {
           return (args as [number, NumWrapper, string][]).map(([arg0, arg1, arg2]) => `${arg0} - NW ${arg1.num} - ${arg2}`).join(' | ');
         });
-    }, defaultAssert);
+    }, useDefaultAssert);
   }
 });
