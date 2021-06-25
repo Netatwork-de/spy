@@ -12,5 +12,8 @@
     "forceConsistentCasingInFileNames": true,
     "stripInternal": true,
     "removeComments": true,
-  }
+  },
+  "include": [
+    "./src"
+  ]
 }
