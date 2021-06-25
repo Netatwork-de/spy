@@ -137,6 +137,9 @@ proxy.member === undefined;  // true
 proxy.prop   === undefined;  // true
 ```
 
+The package also exposes a `createSpy` method which is just an alias of `Spy.create`.
+Feel free to use whatever suits your esthetics.
+
 ### `callThrough`
 
 The original method can be called from the mock implementation using `callThrough`.

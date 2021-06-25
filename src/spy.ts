@@ -187,3 +187,5 @@ export class Spy<TObject extends object> {
     return typeof arg === 'function';
   }
 }
+
+export const createSpy = Spy.create.bind(Spy);
