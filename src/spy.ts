@@ -67,6 +67,8 @@ export class Spy<TObject extends object> {
 
   public callRecords = new Map<MethodNames<TObject>, MethodParameters<TObject, MethodNames<TObject>>[]>();
   public readonly proxy: TObject;
+  private readonly recorderLookup: Map<MethodNames<TObject>, (this: TObject, ...args: MethodParameters<TObject, MethodNames<TObject>>) => TObject[MethodNames<TObject>]> = new Map();
+  private readonly callThroughLookup: Map<MethodNames<TObject>, (...args: MethodParameters<TObject, MethodNames<TObject>>) => TObject[MethodNames<TObject>]> = new Map();
 
   public constructor(
     private readonly originalObject: TObject,
@@ -78,15 +80,24 @@ export class Spy<TObject extends object> {
     this.proxy = new Proxy<TObject>(originalObject, {
       get<TMethod extends MethodNames<TObject>>(target: TObject, p: string | Symbol, _receiver: unknown): unknown {
         const propertyKey = p as keyof TObject;
+
+        const lookup = spy.recorderLookup;
+        let recorder = lookup.get(propertyKey as TMethod);
+        if (recorder !== undefined) { return recorder; }
+
         const original = (target as Indexable<TObject>)[propertyKey];
         const mock = (mocks as Indexable<TObject>)[propertyKey];
         if (spy.isMethod(original)) {
           if (spy.isMethod(mock)) {
-            return spy.createCallRecorder(propertyKey as TMethod, mock);
+            lookup.set(propertyKey as TMethod, recorder = spy.createCallRecorder(propertyKey as TMethod, mock));
+            return recorder;
           }
-          return callThrough
-            ? spy.createCallRecorder(propertyKey as TMethod, original)
-            : spy.createCallRecorder(propertyKey as TMethod, noop as TObject[TMethod]);
+          lookup.set(
+            propertyKey as TMethod,
+            recorder = callThrough
+              ? spy.createCallRecorder(propertyKey as TMethod, original)
+              : spy.createCallRecorder(propertyKey as TMethod, noop as TObject[TMethod]));
+          return recorder;
         }
         return mock ?? (callThrough ? original : undefined);
       }
@@ -97,8 +108,19 @@ export class Spy<TObject extends object> {
     propertyKey: TMethod,
     ...args: MethodParameters<TObject, TMethod>
   ): ReturnType<TObject[TMethod]> {
+    const lookup = this.callThroughLookup;
+    let fn = lookup.get(propertyKey);
+    if (fn !== undefined) { return fn(...args); }
+
     const original = this.originalObject;
-    return (original[propertyKey] as Function).apply(original, args);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    fn = original[propertyKey];
+    if (typeof fn !== 'function') {
+      throw new Error(`The function '${String(propertyKey)}' is not found to call-through.`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    lookup.set(propertyKey, fn = fn.bind(original as any));
+    return fn(...args);
   }
 
   /** @internal */
