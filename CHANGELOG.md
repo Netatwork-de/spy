@@ -1,6 +1,3 @@
-## <small>0.0.1-0 (2021-06-24)</small>
+## 1.0.0 (2021-06-26)
 
 Moved from `@netatwork/mocha-utils`.
-
-
-
