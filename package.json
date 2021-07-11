@@ -11,7 +11,8 @@
     "dev": "tsc -w --preserveWatchOutput",
     "test": "nyc --nycrc-path ./tests/nyc.config.js mocha --config ./tests/.mocharc.js",
     "test:dev": "cross-env DEV=true nyc --nycrc-path ./tests/nyc.config.js mocha --config ./tests/.mocharc.js",
-    "gen:changelog": "conventional-changelog -i CHANGELOG.md -s -r 2"
+    "gen:changelog": "conventional-changelog -i CHANGELOG.md -s -r 2",
+    "rollup": "rimraf dist & rollup -c"
   },
   "keywords": [
     "test",
@@ -31,6 +32,7 @@
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
     "@netatwork/mocha-utils": "^1.1.6",
+    "@rollup/plugin-typescript": "^8.2.1",
     "@types/chai": "^4.2.18",
     "@types/mocha": "^8.2.2",
     "@types/node": "^15.9.0",
@@ -48,6 +50,8 @@
     "mocha-junit-reporter": "^2.0.0",
     "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
+    "rollup": "^2.53.1",
+    "rollup-plugin-terser": "^7.0.2",
     "source-map-support": "^0.5.19",
     "standard-version": "^9.3.0",
     "ts-node": "^10.0.0",

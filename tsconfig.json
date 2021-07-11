@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES5",
-    "module": "CommonJS",
+    "module": "esnext",
     "declaration": true,
     "declarationDir": "./dist/types",
     "declarationMap": true,
