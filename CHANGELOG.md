@@ -1,3 +1,7 @@
+## <small>1.1.2 (2022-12-27)</small>
+
+* chore: deps update ([338ab15](https://github.com/Netatwork-de/spy/commit/338ab15))
+
 ## <small>1.1.1 (2022-12-27)</small>
 
 * integrating codeql scanning ([08fe2ec](https://github.com/Netatwork-de/spy/commit/08fe2ec))
