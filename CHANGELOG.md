@@ -1,7 +1,3 @@
-## <small>1.1.4 (2023-01-31)</small>
-
-* chore(deps): bumped ua-parser-js ([2cf0ea8](https://github.com/Netatwork-de/spy/commit/2cf0ea8))
-
 ## <small>1.1.3 (2022-12-27)</small>
 
 * chore(deps): bump minimatch from 3.0.4 to 3.1.2 (#7) ([e15a60d](https://github.com/Netatwork-de/spy/commit/e15a60d)), closes [#7](https://github.com/Netatwork-de/spy/issues/7)
