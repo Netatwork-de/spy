@@ -1,3 +1,8 @@
+## <small>1.1.4 (2023-02-01)</small>
+
+* fix: security vulnerabilities ([e91217b](https://github.com/Netatwork-de/spy/commit/e91217b))
+
+
 ## <small>1.1.3 (2022-12-27)</small>
 
 * chore(deps): bump minimatch from 3.0.4 to 3.1.2 (#7) ([e15a60d](https://github.com/Netatwork-de/spy/commit/e15a60d)), closes [#7](https://github.com/Netatwork-de/spy/issues/7)
