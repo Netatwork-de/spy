@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/Netatwork-de/spy#readme",
   "devDependencies": {
-    "@commitlint/cli": "^12.1.4",
+    "@commitlint/cli": "^17.6.1",
     "@commitlint/config-conventional": "^12.1.4",
     "@netatwork/mocha-utils": "^2.1.4",
     "@types/chai": "^4.3.4",
