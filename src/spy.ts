@@ -14,13 +14,14 @@ let assert: Assert = null!;
 
 const noop: () => void = () => { /* noop */ };
 export type MethodNames<TObject> = { [Method in keyof TObject]: TObject[Method] extends Function ? Method : never }[keyof TObject];
-export type PickOnlyMethods<TObject> = { [Method in MethodNames<TObject>]: TObject[Method] };
-export type MethodParameters<TObject, TMethod extends MethodNames<TObject>> = Parameters<PickOnlyMethods<TObject>[TMethod]>;
+export type PickOnlyMethods<TObject> = Pick<TObject, MethodNames<TObject>>;
+export type MethodParameters<TObject extends PickOnlyMethods<TObject>, TMethod extends MethodNames<TObject>> = Parameters<TObject[TMethod]>;
+export type MethodReturnType<TObject extends PickOnlyMethods<TObject>, TMethod extends MethodNames<TObject>> = ReturnType<TObject[TMethod]>;
 export type Indexable<TObject> = { [key in keyof TObject]: TObject[key] };
-export type ArgumentTransformer<TObject, TMethod extends MethodNames<TObject>> = (
+export type ArgumentTransformer<TObject, TMethod extends MethodNames<TObject>, TTransformedArguments> = (
   args: MethodParameters<TObject, TMethod> | MethodParameters<TObject, TMethod>[] | undefined
-) => unknown;
-const identity: ArgumentTransformer<unknown, never> = (_) => _;
+) => TTransformedArguments;
+const identity: ArgumentTransformer<unknown, never, unknown> = (_) => _;
 
 export class Spy<TObject extends object> {
 
@@ -45,7 +46,7 @@ export class Spy<TObject extends object> {
           callThrough = arg2;
         } else if (typeof arg1 === 'boolean') {
           callThrough = arg1;
-          mockImplementation = arg2 as Partial<TObject>;
+          mockImplementation = arg2;
         } else {
           throw new Error(`unconsumed arguments: ${String(arg1)}, ${String(arg2)}`);
         }
@@ -96,8 +97,8 @@ export class Spy<TObject extends object> {
   public callThrough<TMethod extends MethodNames<TObject>>(
     propertyKey: TMethod,
     ...args: MethodParameters<TObject, TMethod>
-  ): ReturnType<TObject[TMethod]> {
-    const original = this.originalObject;
+  ): MethodReturnType<TObject, TMethod> {
+    const original = this.originalObject as PickOnlyMethods<TObject>;
     return (original[propertyKey] as Function).apply(original, args);
   }
 
@@ -166,17 +167,17 @@ export class Spy<TObject extends object> {
     methodName: TMethod,
     expectedArgs: MethodParameters<TObject, TMethod>[],
   ): void;
-  public isCalledWith<TMethod extends MethodNames<TObject>>(
+  public isCalledWith<TMethod extends MethodNames<TObject>, TTransformedArguments>(
     methodName: TMethod,
-    expectedArgs: MethodParameters<TObject, TMethod> | MethodParameters<TObject, TMethod>[] | unknown,
+    expectedArgs: TTransformedArguments,
     callIndex: number | undefined,
-    argsTransformer: ArgumentTransformer<TObject, TMethod>,
+    argsTransformer: ArgumentTransformer<TObject, TMethod, TTransformedArguments>,
   ): void;
-  public isCalledWith<TMethod extends MethodNames<TObject>>(
+  public isCalledWith<TMethod extends MethodNames<TObject>, TTransformedArguments>(
     methodName: TMethod,
-    expectedArgs: MethodParameters<TObject, TMethod> | MethodParameters<TObject, TMethod>[] | unknown,
+    expectedArgs: MethodParameters<TObject, TMethod> | MethodParameters<TObject, TMethod>[] | TTransformedArguments,
     callIndex?: number,
-    argsTransformer: ArgumentTransformer<TObject, TMethod> = identity,
+    argsTransformer: ArgumentTransformer<TObject, TMethod, TTransformedArguments> = identity as ArgumentTransformer<TObject, TMethod, TTransformedArguments>,
   ): void {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const actual = argsTransformer(this.getArguments(methodName, callIndex!));
