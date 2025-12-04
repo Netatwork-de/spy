@@ -4,6 +4,7 @@ export interface Assert {
   deepStrictEqual<TValue>(actual: TValue, expected: TValue, errorMessage: string): void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class AssertionFactory {
   private static _assert: Assert | null = null;
   public static configure(assert: Assert): Assert {

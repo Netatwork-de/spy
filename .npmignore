@@ -1,7 +1,8 @@
-.github
-.editorconfig
-tests
-.eslintcache
-.eslintignore
-.eslintrc.js
-Development.md
+/.editorconfig
+/.github
+/.vscode
+/Development.md
+/eslint*
+/tests
+/tests_out
+/tsconfig*

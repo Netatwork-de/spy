@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/ban-types */
 /*! ********************************************************************************
  * Disclaimer:
  * This is implementation of Spy is influenced from Aurelia2's Spy implementation
@@ -7,9 +5,8 @@
  * Refer: https://github.com/aurelia/aurelia/blob/master/packages/__tests__/Spy.ts
  ******************************************************************************** */
 
-import { Assert, AssertionFactory } from './assert';
+import { Assert, AssertionFactory } from './assert.js';
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 let assert: Assert = null!;
 
 const noop: () => void = () => { /* noop */ };
@@ -48,13 +45,13 @@ export class Spy<TObject extends object> {
           callThrough = arg1;
           mockImplementation = arg2;
         } else {
-          throw new Error(`unconsumed arguments: ${String(arg1)}, ${String(arg2)}`);
+          throw new Error(`unconsumed arguments: ${arg1}, ${arg2}`);
         }
         break;
       }
       case 1: {
         const arg1 = args[0];
-        if (typeof arg1 !== 'boolean') { throw new Error(`unconsumed argument: ${String(arg1)}`); }
+        if (typeof arg1 !== 'boolean') { throw new Error(`unconsumed argument: ${arg1}`); }
         callThrough = arg1;
         break;
       }
@@ -62,6 +59,7 @@ export class Spy<TObject extends object> {
         throw new Error('Unexpected number of arguments');
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     assert ??= AssertionFactory.assert;
     return new Spy<TObject>(objectToMock, callThrough, mockImplementation);
   }
@@ -77,17 +75,17 @@ export class Spy<TObject extends object> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const spy = this;
     this.proxy = new Proxy<TObject>(originalObject, {
-      get<TMethod extends MethodNames<TObject>>(target: TObject, p: string | Symbol, _receiver: unknown): unknown {
+      get(target: TObject, p: string | symbol, _receiver: unknown): unknown {
         const propertyKey = p as keyof TObject;
         const original = (target as Indexable<TObject>)[propertyKey];
         const mock = (mocks as Indexable<TObject>)[propertyKey];
         if (spy.isMethod(original)) {
           if (spy.isMethod(mock)) {
-            return spy.createCallRecorder(propertyKey as TMethod, mock);
+            return spy.createCallRecorder(propertyKey as MethodNames<TObject>, mock);
           }
           return callThrough
-            ? spy.createCallRecorder(propertyKey as TMethod, original)
-            : spy.createCallRecorder(propertyKey as TMethod, noop as TObject[TMethod]);
+            ? spy.createCallRecorder(propertyKey as MethodNames<TObject>, original)
+            : spy.createCallRecorder(propertyKey as MethodNames<TObject>, noop as TObject[MethodNames<TObject>]);
         }
         return mock ?? (callThrough ? original : undefined);
       }
@@ -126,8 +124,7 @@ export class Spy<TObject extends object> {
     this.callRecords.set(methodName, record);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  public clearCallRecords<TMethod extends MethodNames<TObject>>(method: TMethod = null!): void {
+  public clearCallRecords(method: MethodNames<TObject> | null = null): void {
     if (method !== null) {
       this.callRecords.delete(method);
       return;
@@ -142,16 +139,16 @@ export class Spy<TObject extends object> {
 
   public getArguments<TMethod extends MethodNames<TObject>>(methodName: TMethod): MethodParameters<TObject, TMethod>[] | undefined;
   public getArguments<TMethod extends MethodNames<TObject>>(methodName: TMethod, callIndex: number): MethodParameters<TObject, TMethod> | undefined;
-  public getArguments<TMethod extends MethodNames<TObject>>(methodName: TMethod, callIndex?: number): MethodParameters<TObject, TMethod> | MethodParameters<TObject, TMethod>[] | undefined {
+  public getArguments<TMethod extends MethodNames<TObject>>(methodName: TMethod, callIndex?: number | null): MethodParameters<TObject, TMethod> | MethodParameters<TObject, TMethod>[] | undefined {
     const calls = this.callRecords.get(methodName);
     if (calls === undefined) { return undefined; }
     if (callIndex !== null && callIndex !== undefined) { return calls[callIndex]; }
     return calls;
   }
 
-  public isCalled(methodName: MethodNames<TObject>, times?: number): void {
+  public isCalled(methodName: MethodNames<TObject>, times?: number | null): void {
     const callCount = this.getCallCount(methodName);
-    if (times != null) {
+    if (times !== null && times !== undefined) {
       assert.strictEqual(callCount, times, `call count mismatch for ${String(methodName)}`);
     } else {
       assert.isAbove(callCount, 0, `expected ${String(methodName)} to have been called at least once, but wasn't`);
@@ -179,11 +176,11 @@ export class Spy<TObject extends object> {
     callIndex?: number,
     argsTransformer: ArgumentTransformer<TObject, TMethod, TTransformedArguments> = identity as ArgumentTransformer<TObject, TMethod, TTransformedArguments>,
   ): void {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const actual = argsTransformer(this.getArguments(methodName, callIndex!));
     assert.deepStrictEqual(actual, expectedArgs, `argument mismatch for ${String(methodName)}`);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
   private isMethod<TMethod extends MethodNames<TObject>>(arg: unknown): arg is TObject[TMethod] {
     return typeof arg === 'function';
   }

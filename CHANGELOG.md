@@ -1,3 +1,8 @@
+## 2.0.0
+
++ **Breaking**: Drop CommonJS support.
++ Upgraded to chai 6 for assertions.
+
 ## 1.2.0 (2023-11-07)
 
 * upgraded to TS 5 ([fe9e573](https://github.com/Netatwork-de/spy/commit/fe9e573))

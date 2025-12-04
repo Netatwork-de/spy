@@ -1,6 +1,5 @@
 ### Publishing checklist
 
-- [ ] Update npm pkg version with `npm version {VERSION}`
-- [ ] Generate changelog with `npm run gen:changelog`, and edit accordingly the version.
-- [ ] Commit.
-- [ ] Push tag `git push --tags`.
+- Add information necessary to upgrade to the [CHANGELOG.md](CHANGELOG.md) & commit.
+- Update npm pkg version with `npm version ...`.
+- Push tag `git push --follow-tags`.
