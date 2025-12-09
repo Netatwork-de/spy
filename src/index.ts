@@ -1,2 +1,2 @@
-export * from './spy';
-export * from './assert';
+export * from './spy.js';
+export * from './assert.js';
