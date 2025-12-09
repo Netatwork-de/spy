@@ -1,6 +1,6 @@
 {
   "name": "@netatwork/spy",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Mock the dependencies in unit tests with this proxy-based spy implementation",
   "author": "Net at Work GmbH",
   "license": "Apache-2.0",
